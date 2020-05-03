@@ -5,31 +5,32 @@ using System.Threading.Tasks;
 using DatingApp.API.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DatingApp.API.Controllers
 {
-    [Route("Value")]
+    [Route("Values")]
     [ApiController]
-    public class ValueController : ControllerBase
+    public class ValuesController : ControllerBase
     {
         private readonly DataContext _context;
-        public ValueController(DataContext context)
+        public ValuesController(DataContext context)
         {
             _context = context;
         }
 
         [HttpGet]
-        public IActionResult GetValues()
+        public async Task<IActionResult> GetValues()
         {
-            var values = _context.Values.ToList();
+            var values = await _context.Values.ToListAsync();
             return Ok(values);
         }
 
         [Route("{id}")]
         [HttpGet]
-        public IActionResult GetValue(int id)
+        public async Task<IActionResult> GetValue(int id)
         {
-            var value = _context.Values.FirstOrDefault(v => v.Id == id);
+            var value = await _context.Values.FirstOrDefaultAsync(v => v.Id == id);
             return Ok(value);
         }
     }
