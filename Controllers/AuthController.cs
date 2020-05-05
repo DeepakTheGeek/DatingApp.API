@@ -45,6 +45,7 @@ namespace DatingApp.API.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(UserForLoginDTO userForLoginDTO)
         {
+            throw new Exception("A test exception thrown by developer.");
             var userFromRepo = await _repo.Login(userForLoginDTO.Username.ToLower(), userForLoginDTO.Password);
 
             if (userFromRepo == null) return Unauthorized();
