@@ -1,5 +1,4 @@
-﻿using DatingApp.API.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,6 +20,6 @@ namespace DatingApp.API.DTOs
         public string City { get; set; }
         public string Country { get; set; }
         public string PhotoURL { get; set; }
-        public ICollection<Photo>  Photos { get; set; }
+        public ICollection<PhotosForDetailedDTO>  Photos { get; set; }
     }
 }
