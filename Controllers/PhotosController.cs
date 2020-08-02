@@ -37,8 +37,16 @@ namespace DatingApp.API.Controllers
             cloudinary = new Cloudinary(acc);
         }
 
+        [HttpGet("{id}", Name = "GetPhoto")]
+        public async Task<IActionResult> GetPhoto(int id)
+        {
+            var photoFromRepo = await _repo.GetPhoto(id);
+            var photoForReturn = _mapper.Map<PhotoForReturnDTO>(photoFromRepo);
+            return Ok(photoForReturn);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> UploadPhotoForUser(int UserId, PhotoForCreationDTO photoForCreationDTO)
+        public async Task<IActionResult> UploadPhotoForUser(int UserId, [FromForm] PhotoForCreationDTO photoForCreationDTO)
         {
             if (UserId != Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
@@ -65,7 +73,7 @@ namespace DatingApp.API.Controllers
             photo.URL = imageUploadResult.Url.ToString();
             photo.PublicId = imageUploadResult.PublicId;
 
-            if (userFromRepo.Photos.Any(p => p.IsMain))
+            if (!userFromRepo.Photos.Any(p => p.IsMain))
             {
                 photo.IsMain = true;
             }
@@ -74,7 +82,8 @@ namespace DatingApp.API.Controllers
 
             if (await _repo.SaveAll())
             {
-                return Ok();
+                var photoForReturn = _mapper.Map<PhotoForReturnDTO>(photo);
+                return CreatedAtRoute("GetPhoto", new { userId = UserId, id = photo.Id }, photoForReturn);
             }
 
             return BadRequest("Photo could not be saved.");
